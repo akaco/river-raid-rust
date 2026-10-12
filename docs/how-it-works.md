@@ -21,7 +21,8 @@ game like it.
 
 ## The picture
 
-The picture is 160 pixels wide and 238 lines tall. Each pixel is drawn
+The picture is 160 pixels wide and 199 lines tall (lines 39 to 237; the
+numbers follow the old TV-game screens this style comes from). Each pixel is drawn
 twice as wide as it is tall, like old TV games.
 
 - Lines 39 to 199 are the river.
@@ -97,8 +98,46 @@ what the two voices play:
 `main.rs` hands the two voices to an audio thread (tinyaudio), which calls
 `Synth::sample()` for every sample.
 
-## Phones and tablets
+## The app: from game to screen
 
-The game logic has no window or sound code in it, and the window code
-already has touch controls and scales the picture to any screen. macroquad
-builds for iOS and Android; that is the next step.
+`main.rs` is the only part that knows about the window. Each time the
+screen refreshes it:
+
+1. works out the layout for the screen's size (`touch::Layout`);
+2. reads the fingers, keys and game controllers into one `Input`;
+3. runs as many 1/60 s game frames as are due (none, one or more, so the
+   game runs at the same speed on a 60 Hz or 120 Hz screen);
+4. draws the whole picture into an off-screen texture with `screen::draw`;
+5. copies the river part and the status part of that texture to where the
+   layout puts them, then draws the touch controls on top.
+
+Cutting the picture in two is what lets the river fill a phone: in
+landscape it is as tall as the screen with a small status panel in the
+corner; in portrait it fills the width with the status and controls in a
+panel below. On a computer the whole picture is shown as it is.
+[mobile.md](mobile.md) explains the layout choices.
+
+`touch.rs` has no window code, so the layout is unit tested: for common
+phone and tablet sizes, both ways round, it checks the water stays inside
+the safe area, nothing covers the river in portrait, and the controls do
+not overlap.
+
+## Where to change what
+
+| To change | Look in |
+| --- | --- |
+| A picture (plane, enemy, bridge...) | `assets/sprites.txt` |
+| Colours of water, bank, road, status bar | `src/palette.rs` |
+| Rules: fuel use, speeds, scoring, extra planes | `src/game.rs` |
+| How the river is made, how hard it gets | `src/river.rs` (`add_band`) |
+| Enemy movement, what each object is worth | `src/objects.rs` |
+| Sound effects | `src/sound.rs` |
+| What is drawn where in the picture | `src/screen.rs` |
+| Layout on phones and tablets, control sizes | `src/touch.rs` |
+| Keys, touch, controllers, drawing the controls | `src/main.rs` |
+| Android app name, package, orientation | `Cargo.toml` (`[package.metadata.android]`) |
+| iPhone/iPad app settings | `ios/project.yml` |
+
+After a change, `cargo test --release` checks the river can still be
+flown, the autopilot still gets past the second bridge, and the phone
+layouts still fit.

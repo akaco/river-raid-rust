@@ -22,8 +22,7 @@ cd river-raid-rust
 cargo run --release
 ```
 
-Tested on macOS (Apple Silicon) and Linux. For phones and tablets see
-[docs/mobile.md](docs/mobile.md). On Linux you may need the usual
+Tested on macOS (Apple Silicon) and Linux. On Linux you may need the usual
 window and sound libraries (`libx11-dev libxi-dev libgl1-mesa-dev
 libasound2-dev` on Debian/Ubuntu). To build without sound:
 `cargo run --release --no-default-features`.
@@ -39,10 +38,22 @@ libasound2-dev` on Debian/Ubuntu). To build without sound:
 | M | Mute |
 | T | Show the touch controls (the mouse works as a finger) |
 
-On a phone or tablet: a pad on the left steers and changes speed, a button
-on the right fires, and pause and sound are in the top corner. Game
-controllers work too. [docs/mobile.md](docs/mobile.md) has the controls and how to
-build for iPhone, iPad and Android.
+## Phones and tablets
+
+The same game runs on iPhone, iPad and Android, in landscape (full screen)
+or portrait. A pad on the left steers and changes speed, FIRE is on the
+right, and pause and sound are in the top corner. Game controllers work
+too.
+
+<img src="docs/phone-landscape.png" height="240" alt="Phone, landscape"> <img src="docs/phone-portrait.png" height="240" alt="Phone, portrait">
+
+- **Android**: `cargo quad-apk build --release` makes an APK you can
+  install on your phone.
+- **iPhone and iPad**: `cd ios && xcodegen`, open the project in Xcode,
+  pick your team and press Run.
+
+[docs/mobile.md](docs/mobile.md) has the full steps, the controls, and
+why the screen is laid out the way it is.
 
 ## How to play
 
@@ -59,29 +70,36 @@ build for iPhone, iPad and Android.
 
 ```
 src/
-  lib.rs      the game as a library (no window needed)
-  game.rs     rules: phases, fuel, score, lives, steering, missiles
-  river.rs    the river: six bands on screen, the level generator
-  objects.rs  boats, helicopters, jets, fuel pumps, houses, bridges
-  collide.rs  what touches what, by overlapping pixels
-  screen.rs   where things are on screen, and drawing to any Canvas
-  sprites.rs  reads the pictures file; the font
-  touch.rs    on-screen controls: layout for any screen, the pad
+  lib.rs       the game as a library (no window needed)
+  game.rs      rules: phases, fuel, score, lives, steering, missiles
+  river.rs     the river: six bands on screen, the level generator
+  objects.rs   boats, helicopters, jets, fuel pumps, houses, bridges
+  collide.rs   what touches what, by overlapping pixels
+  screen.rs    where things are on screen, and drawing to any Canvas
+  sprites.rs   reads the pictures file; the font
+  palette.rs   colours
+  sound.rs     sound effects  ┐ our own little synthesizer:
+  synth.rs     square + noise ┘ two voices
+  touch.rs     screen layout for phones and tablets; the steering pad
+  main.rs      the app: window, keys, touch, controllers, audio thread
 assets/
-  sprites.txt every picture, as letters you can edit
+  sprites.txt  every picture, as letters you can edit
 examples/
   sprite_sheet.rs  draws every sprite into one picture
-  palette.rs  colours
-  sound.rs    sound effects  ┐ our own little synthesizer:
-  synth.rs    square + noise ┘ two voices
-  main.rs     the macroquad window, keys, touch, audio thread
-ios/          Xcode project (XcodeGen) for iPhone and iPad
-vendor/       miniquad with an iOS multi-touch fix
+tests/         river and autopilot tests
+docs/          how it works, phones and tablets
+ios/           Xcode project (XcodeGen) for iPhone and iPad
+vendor/        miniquad with fixes for iOS touch and Android controllers
 ```
 
-The game runs at a fixed 60 frames a second and draws a 160 x 238 pixel
-picture, which the window scales to fit. Because `game.rs` never touches
-the window, the same code can be tested headless and run on phones.
+The game runs at a fixed 60 frames a second and draws a 160 x 199 pixel
+picture, which the app cuts up and scales to fit the screen. Because the
+game itself never touches the window, the same code is tested headless
+and runs on computers and phones alike.
+
+**Read next:** [docs/how-it-works.md](docs/how-it-works.md) is a tour of
+the code: one frame step by step, the river generator, collisions, sound,
+how the app draws on any screen, and where to change what.
 
 ## Change the pictures
 
@@ -93,9 +111,6 @@ is wrong, the game stops and says which line. To see every picture at
 once: `cargo run --example sprite_sheet > sprites.ppm`.
 
 ![All sprites](docs/sprites.png)
-
-[docs/how-it-works.md](docs/how-it-works.md) explains the river, the
-collisions and the sound in more detail.
 
 ## Tests
 
