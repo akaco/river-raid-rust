@@ -32,12 +32,13 @@ pub fn row_of(dy: u8) -> u8 {
     15 - dy / 2
 }
 
-/// The sprite line and colour an object shows on line `dy` of its band.
-pub fn object_line(river: &River, band: usize, dy: u8) -> Option<(&'static str, Colour)> {
-    sprite_line(river.bands[band].object.kind.sprite()?, dy)
+/// The sprite an object shows on line `dy` of its band, and that line of it.
+pub fn object_line(river: &River, band: usize, dy: u8) -> Option<(&'static Sprite, &'static str)> {
+    let sprite = river.bands[band].object.kind.sprite()?;
+    Some((sprite, sprite_line(sprite, dy)?))
 }
 
-fn sprite_line(sprite: &'static Sprite, dy: u8) -> Option<(&'static str, Colour)> {
+fn sprite_line(sprite: &'static Sprite, dy: u8) -> Option<&'static str> {
     let i = dy.checked_sub(sprite.first_line)? as usize;
     sprite.lines.get(i).copied()
 }
@@ -57,7 +58,7 @@ pub fn plane_pixels(game: &Game, y: u8) -> impl Iterator<Item = u8> {
     let art = plane_sprite(game.plane.sprite).and_then(|s| sprite_line(s, y.checked_sub(sprites::PLANE_TOP)?));
     let x0 = game.plane.x;
     art.into_iter()
-        .flat_map(move |(art, _)| art.bytes().enumerate().filter(|(_, b)| *b == b'#').map(move |(i, _)| (x0 as usize + i) as u8 % WIDTH))
+        .flat_map(move |art| art.bytes().enumerate().filter(|(_, b)| *b == b'#').map(move |(i, _)| (x0 as usize + i) as u8 % WIDTH))
 }
 
 /// The missile's pixel on line `y`, if it is there. It is 8 lines tall and
@@ -104,9 +105,9 @@ pub fn draw(game: &Game, c: &mut impl Canvas) {
         if centre > 0 {
             c.rect(80 - centre * 4, y, centre * 8, 1, colour);
         }
-        if let Some((art, colour)) = object_line(river, k, dy) {
-            for x in band.object.pixels(art) {
-                c.rect(x, y, 1, 1, colour);
+        if let Some((sprite, art)) = object_line(river, k, dy) {
+            for (x, letter) in band.object.pixels(art) {
+                c.rect(x, y, 1, 1, sprite.colour(letter));
             }
         }
         if let Some(x) = missile_pixel(game, y) {

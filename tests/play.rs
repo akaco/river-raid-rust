@@ -15,11 +15,11 @@ fn autopilot(g: &Game, frame: u32) -> Input {
         for x in 0..160u8 {
             blocked[x as usize] |= band.land.is_land(row_of(dy), x);
         }
-        if let Some((art, _)) = object_line(&g.river, k, dy)
+        if let Some((_, art)) = object_line(&g.river, k, dy)
             && band.object.kind != Kind::FuelDepot
             && y >= 150
         {
-            for x in band.object.pixels(art) {
+            for (x, _) in band.object.pixels(art) {
                 for d in 0..10u8 {
                     blocked[(x as usize + 160 + d as usize - 5) % 160] = true; // (a little room either side)
                 }
@@ -51,9 +51,9 @@ fn autopilot(g: &Game, frame: u32) -> Input {
         let tank = (100..182u8).rev().find_map(|y| {
             let (k, _) = band_at(&g.river, y);
             let object = g.river.bands[k].object;
-            (object.kind == Kind::FuelDepot).then(|| object.x as i32 + 4)
+            (object.kind == Kind::FuelDepot).then(|| object.x as i32 + object.width() as i32 / 2)
         });
-        if let Some(t) = tank.filter(|t| best.is_some_and(|(a, b)| a <= t - 4 && t + 4 < b)) {
+        if let Some(t) = tank.filter(|t| best.is_some_and(|(a, b)| a <= t - 5 && t + 5 < b)) {
             target = t;
         }
     }
@@ -61,8 +61,8 @@ fn autopilot(g: &Game, frame: u32) -> Input {
     let fuel_ahead = (60..182u8).rev().find_map(|y| {
         let (k, dy) = band_at(&g.river, y);
         let object = g.river.bands[k].object;
-        let art = object_line(&g.river, k, dy)?.0;
-        object.pixels(art).any(|x| x == plane).then_some(object.kind == Kind::FuelDepot)
+        let art = object_line(&g.river, k, dy)?.1;
+        object.pixels(art).any(|(x, _)| x == plane).then_some(object.kind == Kind::FuelDepot)
     });
     Input {
         left: (plane as i32) > target + 2,

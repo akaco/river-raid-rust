@@ -11,7 +11,8 @@
 //! each bridge is saved, so after a crash the river is rebuilt from the
 //! last bridge.
 
-use crate::objects::{Kind, Object, Size};
+use crate::objects::{Kind, Object};
+use crate::sprites;
 
 /// Bands on screen. Index 0 is the bottom band, 5 the top one.
 pub const BANDS: usize = 6;
@@ -324,8 +325,8 @@ impl River {
     fn choose_object(&self, band: &Band) -> Object {
         let seed = self.seed;
         if band.bridge {
-            let x = 80 - Size::Quad.width() / 2;
-            return Object::new(Kind::Bridge, x, Size::Quad, false);
+            let x = 80 - sprites::BRIDGE.width() / 2;
+            return Object::new(Kind::Bridge, x, false);
         }
 
         // Enemies get more likely in later sections; otherwise a fuel
@@ -334,51 +335,51 @@ impl River {
         let roll = seed.below(12, 100);
         if roll >= enemy_chance {
             let fuel = roll < enemy_chance + (100 - enemy_chance) * 2 / 3;
-            return if fuel { self.place(Kind::FuelDepot, Size::Normal, band) } else { self.house(band) };
+            return if fuel { self.place(Kind::FuelDepot, band) } else { self.house(band) };
         }
         let pick = seed.below(20, 8);
-        let (kind, size) = match pick {
-            0 | 1 if self.section >= 3 => (Kind::Jet, Size::Normal),
-            0..=3 => (Kind::Ship, Size::Double),
-            _ => (Kind::Helicopter(0), Size::Normal),
+        let kind = match pick {
+            0 | 1 if self.section >= 3 => Kind::Jet,
+            0..=3 => Kind::Ship,
+            _ => Kind::Helicopter(0),
         };
         if kind == Kind::Jet {
             // jets fly across the whole screen
             let x = seed.below(4, 160) as u8;
-            return Object::new(kind, x, size, seed.below(28, 2) == 0);
+            return Object::new(kind, x, seed.below(28, 2) == 0);
         }
-        let object = self.place(kind, size, band);
+        let object = self.place(kind, band);
         if object.kind == Kind::None && kind == Kind::Ship {
             // no room for a boat: a helicopter instead
-            return self.place(Kind::Helicopter(0), Size::Normal, band);
+            return self.place(Kind::Helicopter(0), band);
         }
         object
     }
 
     /// Puts an object somewhere on the open water, or nothing if it does
     /// not fit.
-    fn place(&self, kind: Kind, size: Size, band: &Band) -> Object {
+    fn place(&self, kind: Kind, band: &Band) -> Object {
         let seed = self.seed;
         let water = band.land.open_water();
         let side = if water[1].1 > water[1].0 && seed.below(29, 2) == 1 { water[1] } else { water[0] };
         let (left, right) = (side.0 + 2, side.1.saturating_sub(2));
-        let width = size.width();
+        let width = Object::new(kind, 0, false).width();
         if right < left + width {
             return Object::NONE;
         }
         let x = left + seed.below(4, (right - left - width + 1) as u32) as u8;
         let facing_left = kind != Kind::FuelDepot && seed.below(28, 2) == 0;
-        Object::new(kind, x, size, facing_left)
+        Object::new(kind, x, facing_left)
     }
 
     /// A house on the left or right bank.
     fn house(&self, band: &Band) -> Object {
         let seed = self.seed;
-        let width = Size::Double.width();
+        let width = sprites::HOUSE.width();
         let room = band.land.bank().saturating_sub(width);
         let x = seed.below(4, room as u32 + 1) as u8;
         let x = if seed.below(29, 2) == 0 { x } else { 160 - width - x };
-        Object::new(Kind::House, x, Size::Double, seed.below(28, 2) == 0)
+        Object::new(Kind::House, x, seed.below(28, 2) == 0)
     }
 }
 

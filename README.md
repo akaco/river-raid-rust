@@ -62,6 +62,8 @@ src/
   collide.rs  what touches what, by overlapping pixels
   screen.rs   where things are on screen, and drawing to any Canvas
   sprites.rs  all pictures and the font, as text pixel art
+examples/
+  sprite_sheet.rs  draws every sprite into one picture
   palette.rs  colours
   sound.rs    sound effects  ┐ our own little synthesizer:
   synth.rs    square + noise ┘ two voices
@@ -71,6 +73,12 @@ src/
 The game runs at a fixed 60 frames a second and draws a 160 x 238 pixel
 picture, which the window scales to fit. Because `game.rs` never touches
 the window, the same code can be tested headless and run on phones.
+
+All the pictures are text pixel art in `src/sprites.rs`, one letter per
+pixel. To see them all at once:
+`cargo run --example sprite_sheet > sprites.ppm`.
+
+![All sprites](docs/sprites.png)
 
 [docs/how-it-works.md](docs/how-it-works.md) explains the river, the
 collisions and the sound in more detail.

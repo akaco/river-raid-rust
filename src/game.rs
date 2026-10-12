@@ -511,7 +511,10 @@ impl Game {
     fn destroy(&mut self, band: usize, frame: u8) {
         let o = &mut self.river.bands[band].object;
         let kind = o.kind;
+        // the explosion is centred where the object was
+        let width = o.width();
         o.kind = Kind::Explosion(frame);
+        o.x = ((o.x as i16 + (width as i16 - o.width() as i16) / 2).rem_euclid(160)) as u8;
         self.sound.explosion = 0x17;
         if kind == Kind::Bridge {
             self.flash = 0x17;

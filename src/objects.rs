@@ -72,38 +72,11 @@ impl Kind {
     }
 }
 
-/// How wide the sprite is drawn.
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-pub enum Size {
-    Normal,
-    /// Every pixel twice as wide (boats, houses).
-    Double,
-    /// Every pixel four times as wide (bridges).
-    Quad,
-}
-
-impl Size {
-    /// Pixel width of one sprite column.
-    pub fn scale(self) -> u8 {
-        match self {
-            Size::Normal => 1,
-            Size::Double => 2,
-            Size::Quad => 4,
-        }
-    }
-
-    /// Width of the whole sprite in pixels.
-    pub fn width(self) -> u8 {
-        8 * self.scale()
-    }
-}
-
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Object {
     pub kind: Kind,
     /// Horizontal position, 0-159 (the screen wraps round).
     pub x: u8,
-    pub size: Size,
     pub facing_left: bool,
     /// Ships and helicopters start still and set off at random moments.
     pub moving: bool,
@@ -112,11 +85,16 @@ pub struct Object {
 }
 
 impl Object {
-    pub const NONE: Object = Object { kind: Kind::None, x: 0, size: Size::Normal, facing_left: false, moving: false, turned: false };
+    pub const NONE: Object = Object { kind: Kind::None, x: 0, facing_left: false, moving: false, turned: false };
 
     /// A new object whose picture starts at column `x`.
-    pub fn new(kind: Kind, x: u8, size: Size, facing_left: bool) -> Object {
-        Object { kind, x, size, facing_left, moving: false, turned: false }
+    pub fn new(kind: Kind, x: u8, facing_left: bool) -> Object {
+        Object { kind, x, facing_left, moving: false, turned: false }
+    }
+
+    /// Width of its picture in pixels.
+    pub fn width(&self) -> u8 {
+        self.kind.sprite().map_or(0, |s| s.width())
     }
 
     /// One pixel along, wrapping round the screen.
@@ -148,13 +126,12 @@ impl Object {
         }
     }
 
-    /// Screen pixels covered by sprite line `art`, left to right.
-    pub fn pixels<'a>(&self, art: &'a str) -> impl Iterator<Item = u8> + 'a {
-        let scale = self.size.scale() as u16;
-        let (x0, left) = (self.x as u16, self.facing_left);
-        art.bytes().enumerate().filter(|(_, b)| *b == b'#').flat_map(move |(i, _)| {
-            let col = if left { 7 - i as u16 } else { i as u16 };
-            (0..scale).map(move |k| ((x0 + col * scale + k) % 160) as u8)
+    /// The screen pixels drawn by sprite line `art`, with their letters.
+    pub fn pixels<'a>(&self, art: &'a str) -> impl Iterator<Item = (u8, u8)> + 'a {
+        let (x0, left, w) = (self.x as usize, self.facing_left, art.len());
+        art.bytes().enumerate().filter(|(_, b)| *b != b'.').map(move |(i, b)| {
+            let col = if left { w - 1 - i } else { i };
+            (((x0 + col) % 160) as u8, b)
         })
     }
 }

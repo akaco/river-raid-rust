@@ -69,9 +69,9 @@ fn objects_start_in_the_right_place() {
             Kind::Bridge => 5,
             _ => 6,
         }] += 1;
-        for (i, (art, _)) in sprite.lines.iter().enumerate() {
+        for (i, art) in sprite.lines.iter().enumerate() {
             let row = row_of(sprite.first_line + i as u8);
-            for x in o.pixels(art) {
+            for (x, _) in o.pixels(art) {
                 let land = band.land.is_land(row, x);
                 match o.kind {
                     Kind::House => assert!(land, "house in the water: {band:?}"),

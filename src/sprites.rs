@@ -1,222 +1,239 @@
 //! Pictures: everything is drawn from these small pixel-art images.
 //!
-//! Each sprite line is 8 pixels wide (`#` = drawn) with its colour. River
-//! objects say on which line of their 32-line band they start.
+//! Each letter in a picture is one pixel, in the colour the sprite's
+//! `colours` list gives it; `.` is see-through. Pixels are twice as wide as
+//! they are tall, so the pictures look squashed in the source. River
+//! objects face right and say on which line of their 32-line band they
+//! start.
 
 use crate::palette::*;
 
-/// A picture made of 8-pixel lines.
 pub struct Sprite {
     /// First line, counted from the top of its river band (or of the plane).
     pub first_line: u8,
-    pub lines: &'static [(&'static str, Colour)],
+    /// What each letter in the picture stands for.
+    pub colours: &'static [(char, Colour)],
+    pub lines: &'static [&'static str],
 }
+
+impl Sprite {
+    /// Width in pixels.
+    pub fn width(&self) -> u8 {
+        self.lines[0].len() as u8
+    }
+
+    /// The colour of a letter in the picture.
+    pub fn colour(&self, letter: u8) -> Colour {
+        self.colours.iter().find(|(c, _)| *c as u8 == letter).map_or(BLACK, |&(_, colour)| colour)
+    }
+}
+
+const BLAST: &[(char, Colour)] = &[('F', FIRE), ('S', SPARK), ('W', FLARE), ('K', SMOKE)];
 
 pub const EXPLOSION_1: Sprite = Sprite {
     first_line: 12,
-    lines: &[("........", FIRE), ("...#....", SPARK), ("..###...", FIRE), (".##.##..", FIRE), ("..###...", FIRE), ("...#....", SPARK)],
+    colours: BLAST,
+    lines: &[".......SS.......", ".....SFFFFS.....", "....SFFWWFFS....", ".....SFFFFS.....", ".......SS......."],
 };
 
 pub const EXPLOSION_2: Sprite = Sprite {
     first_line: 10,
+    colours: BLAST,
     lines: &[
-        ("#.....#.", SPARK),
-        (".#.#.#..", FIRE),
-        ("..###...", SPARK),
-        ("###.###.", FIRE),
-        ("..###...", SPARK),
-        (".#.#.#..", FIRE),
-        ("#.....#.", SPARK),
-        ("........", FIRE),
-        ("...#....", SMOKE),
+        "..S.....S.....S.",
+        "....F..FF..F....",
+        "..F..FFSSFF..F..",
+        "S...FSSWWSSF...S",
+        "...FFSWWWWSFF...",
+        "S...FSSWWSSF...S",
+        "..F..FFSSFF..F..",
+        "....F..FF..F....",
+        ".S.....S.....S..",
     ],
 };
 
 pub const EXPLOSION_3: Sprite = Sprite {
     first_line: 10,
+    colours: BLAST,
     lines: &[
-        (".#...#..", SMOKE),
-        ("........", SMOKE),
-        ("...#....", SMOKE),
-        ("#.....#.", SMOKE),
-        ("........", SMOKE),
-        ("...#....", SMOKE),
-        (".#...#..", SMOKE),
+        "...K.......K....",
+        "......K..K......",
+        ".K....KKKK....K.",
+        "....KKK..KKK....",
+        ".K....KKKK....K.",
+        "......K..K......",
+        "...K.......K....",
     ],
 };
 
-/// Enemy jet, flying right.
+/// Enemy jet, side on: tail fin, canopy, pointed nose, swept wing, exhaust.
 pub const JET: Sprite = Sprite {
-    first_line: 13,
+    first_line: 12,
+    colours: &[('B', STEEL), ('D', STEEL_DARK), ('G', CANOPY), ('F', FIRE)],
     lines: &[
-        ("#.......", STEEL_DARK),
-        ("##......", STEEL_DARK),
-        ("#######.", STEEL),
-        ("########", STEEL),
-        ("#######.", STEEL),
-        ("##......", STEEL_DARK),
-        ("#.......", STEEL_DARK),
+        "DD..............",
+        "DDD.............",
+        "DDDD.....GGG....",
+        ".DBBBBBBBBGGBB..",
+        "FBBBBBBBBBBBBBBB",
+        ".DBBBBDDDDBBBB..",
+        ".....DDDDD......",
+        "....DDDD........",
     ],
 };
 
-/// Helicopter facing right, rotor in two positions.
+const HELICOPTER_COLOURS: &[(char, Colour)] = &[('R', ROTOR), ('M', SKID), ('B', OLIVE), ('D', OLIVE_DARK), ('G', CANOPY), ('S', SKID)];
+
+/// Helicopter, side on: main rotor, tail boom and rotor, glass nose,
+/// skids. Two frames so the rotors spin.
 pub const HELICOPTER_1: Sprite = Sprite {
-    first_line: 12,
+    first_line: 11,
+    colours: HELICOPTER_COLOURS,
     lines: &[
-        ("########", ROTOR),
-        ("....#...", ROTOR),
-        ("#..####.", OLIVE),
-        ("########", OLIVE),
-        ("#..####.", OLIVE),
-        ("...#..#.", ROTOR),
-        ("..######", ROTOR),
+        "RRRRRRRRRRRRRRR.",
+        "........M.......",
+        "......BBBBBBB...",
+        "RD...BBBBBBGGG..",
+        "RDDBBBBBBBBGGGG.",
+        "R....DBBBBBBBBB.",
+        "......DDDDDDDD..",
+        ".......S....S...",
+        ".....SSSSSSSSSS.",
     ],
 };
 
 pub const HELICOPTER_2: Sprite = Sprite {
-    first_line: 12,
+    first_line: 11,
+    colours: HELICOPTER_COLOURS,
     lines: &[
-        ("..####..", ROTOR),
-        ("....#...", ROTOR),
-        ("#..####.", OLIVE),
-        ("########", OLIVE),
-        ("#..####.", OLIVE),
-        ("...#..#.", ROTOR),
-        ("..######", ROTOR),
+        "....RRRRRRRRR...",
+        "........M.......",
+        "......BBBBBBB...",
+        ".D...BBBBBBGGG..",
+        "RDDBBBBBBBBGGGG.",
+        ".....DBBBBBBBBB.",
+        "......DDDDDDDD..",
+        ".......S....S...",
+        ".....SSSSSSSSSS.",
     ],
 };
 
-/// Patrol boat (drawn double width), bow to the right.
+/// Patrol boat, side on: mast, cabin with windows, funnel, grey hull with
+/// a red waterline, bow to the right.
 pub const SHIP: Sprite = Sprite {
-    first_line: 14,
-    lines: &[("....#...", ROTOR), ("...###..", CABIN), ("..####..", CABIN), ("########", HULL), (".######.", HULL), ("..####..", HULL)],
+    first_line: 12,
+    colours: &[('M', SKID), ('W', CABIN), ('G', WINDOW), ('F', FUNNEL), ('H', HULL), ('K', WATERLINE)],
+    lines: &[
+        "........M...............",
+        "........M.......FF......",
+        "....WWWWWWWWW...FF......",
+        "....WGGWGGWGGW..FF......",
+        "...WWWWWWWWWWWWWWWWW....",
+        "HHHHHHHHHHHHHHHHHHHHHHHH",
+        "HHHHHHHHHHHHHHHHHHHHHH..",
+        ".KKKKKKKKKKKKKKKKKKKK...",
+    ],
 };
 
-/// Bridge deck with railings (drawn four times as wide).
+/// Bridge, seen from above: the road carried across the river between two
+/// red railings, with its shadow on the water.
 pub const BRIDGE: Sprite = Sprite {
-    first_line: 9,
-    lines: &[
-        ("########", RAIL),
-        ("#.#.#.#.", RAIL),
-        ("########", DECK),
-        ("########", DECK),
-        ("########", DECK),
-        ("########", DECK),
-        ("########", DECK),
-        ("########", DECK),
-        ("########", DECK),
-        ("########", DECK),
-        ("########", DECK),
-        ("########", DECK),
-        ("#.#.#.#.", RAIL),
-        ("########", RAIL),
-    ],
-};
-
-/// A house on the bank (drawn double width).
-pub const HOUSE: Sprite = Sprite {
-    first_line: 10,
-    lines: &[
-        ("...##...", ROOF),
-        ("..####..", ROOF),
-        (".######.", ROOF),
-        ("########", ROOF),
-        (".######.", WALL),
-        (".#.##.#.", WALL),
-        (".######.", WALL),
-        (".##..##.", WALL),
-        (".##..##.", WALL),
-    ],
-};
-
-/// Fuel tank: fly over it to refuel, or shoot it for points.
-pub const FUEL_TANK: Sprite = Sprite {
     first_line: 8,
+    colours: &[('E', RAIL), ('P', RAIL_POST), ('A', ROAD), ('Y', ROAD_LINE), ('S', SHADOW)],
     lines: &[
-        ("..####..", TANK_CAP),
-        (".######.", TANK),
-        ("########", TANK),
-        ("####.###", TANK),
-        ("###...##", TANK),
-        ("##.....#", TANK),
-        ("##.....#", TANK),
-        ("###...##", TANK),
-        ("########", TANK),
-        ("########", TANK),
-        (".######.", TANK),
-        ("..#..#..", TANK_CAP),
-        ("..#..#..", TANK_CAP),
-        (".######.", TANK_CAP),
+        "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+        "PEEEPEEEPEEEPEEEPEEEPEEEPEEEPEEE",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY",
+        "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "PEEEPEEEPEEEPEEEPEEEPEEEPEEEPEEE",
+        "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+        "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+        "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+    ],
+};
+
+/// A house on the bank: roof, chimney, two windows and a door.
+pub const HOUSE: Sprite = Sprite {
+    first_line: 11,
+    colours: &[('R', ROOF), ('C', CHIMNEY), ('W', WALL), ('G', WINDOW_LIT), ('D', DOOR)],
+    lines: &[
+        ".......RR...CC..",
+        ".....RRRRRR.CC..",
+        "...RRRRRRRRRRCC.",
+        ".RRRRRRRRRRRRRR.",
+        "RRRRRRRRRRRRRRRR",
+        ".WWWWWWWWWWWWWW.",
+        ".WGGWWWDDWWWGGW.",
+        ".WGGWWWDDWWWGGW.",
+        ".WWWWWWDDWWWWWW.",
+    ],
+};
+
+/// Fuel: a red jerrycan with a yellow cap. Fly over it to refuel, or shoot
+/// it for points.
+pub const FUEL_TANK: Sprite = Sprite {
+    first_line: 10,
+    colours: &[('R', CAN), ('L', CAN_LIGHT), ('H', CAN_DARK), ('C', CAN_CAP)],
+    lines: &[
+        ".HHHHH..CC",
+        ".H...H..CC",
+        "RRRRRRRRRR",
+        "RLRRRRRRLR",
+        "RRLRRRRLRR",
+        "RRRLRRLRRR",
+        "RRRRLLRRRR",
+        "RRRLRRLRRR",
+        "RRLRRRRLRR",
+        "RLRRRRRRLR",
+        "RRRRRRRRRR",
+        ".RRRRRRRR.",
     ],
 };
 
 /// The player's plane is drawn from this line of the screen down.
 pub const PLANE_TOP: u8 = 182;
 
+/// (The plane is drawn in its player's colour.)
+const PLANE_COLOURS: &[(char, Colour)] = &[('#', PLAYER_1)];
+
 pub const PLANE: Sprite = Sprite {
     first_line: 0,
+    colours: PLANE_COLOURS,
     lines: &[
-        ("...#....", PLAYER_1),
-        ("...#....", PLAYER_1),
-        ("..###...", PLAYER_1),
-        ("..###...", PLAYER_1),
-        (".#####..", PLAYER_1),
-        ("#######.", PLAYER_1),
-        ("##.#.##.", PLAYER_1),
-        ("...#....", PLAYER_1),
-        ("...#....", PLAYER_1),
-        ("..###...", PLAYER_1),
-        (".##.##..", PLAYER_1),
+        "...#....", "...#....", "..###...", "..###...", ".#####..", "#######.", "##.#.##.", "...#....", "...#....", "..###...", ".##.##..",
     ],
 };
 
 pub const PLANE_RIGHT: Sprite = Sprite {
     first_line: 0,
+    colours: PLANE_COLOURS,
     lines: &[
-        ("...#....", PLAYER_1),
-        ("...#....", PLAYER_1),
-        ("..###...", PLAYER_1),
-        ("..###...", PLAYER_1),
-        ("..####..", PLAYER_1),
-        (".#####..", PLAYER_1),
-        ("..#.##..", PLAYER_1),
-        ("...#....", PLAYER_1),
-        ("...#....", PLAYER_1),
-        ("..###...", PLAYER_1),
-        ("...##...", PLAYER_1),
+        "...#....", "...#....", "..###...", "..###...", "..####..", ".#####..", "..#.##..", "...#....", "...#....", "..###...", "...##...",
     ],
 };
 
 pub const PLANE_LEFT: Sprite = Sprite {
     first_line: 0,
+    colours: PLANE_COLOURS,
     lines: &[
-        ("...#....", PLAYER_1),
-        ("...#....", PLAYER_1),
-        ("..###...", PLAYER_1),
-        ("..###...", PLAYER_1),
-        (".####...", PLAYER_1),
-        (".#####..", PLAYER_1),
-        (".##.#...", PLAYER_1),
-        ("...#....", PLAYER_1),
-        ("...#....", PLAYER_1),
-        ("..###...", PLAYER_1),
-        ("..##....", PLAYER_1),
+        "...#....", "...#....", "..###...", "..###...", ".####...", ".#####..", ".##.#...", "...#....", "...#....", "..###...", "..##....",
     ],
 };
 
 pub const PLANE_CRASHED: Sprite = Sprite {
     first_line: 1,
-    lines: &[
-        ("#.....#.", PLAYER_1),
-        ("..#.#...", PLAYER_1),
-        (".#...#..", PLAYER_1),
-        ("...#....", PLAYER_1),
-        ("#.#.#.#.", PLAYER_1),
-        ("...#....", PLAYER_1),
-        (".#...#..", PLAYER_1),
-        ("..#.#...", PLAYER_1),
-        ("#.....#.", PLAYER_1),
-    ],
+    colours: PLANE_COLOURS,
+    lines: &["#.....#.", "..#.#...", ".#...#..", "...#....", "#.#.#.#.", "...#....", ".#...#..", "..#.#...", "#.....#."],
 };
 
 /// A 5 x 7 pixel font for the score and the status bar.

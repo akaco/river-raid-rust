@@ -28,8 +28,8 @@ pub fn check(game: &Game) -> Collisions {
         let land = |x: u8| band.land.is_land(row, x);
 
         let mut object = [false; WIDTH as usize];
-        if let Some((art, _)) = screen::object_line(river, k, dy) {
-            for x in band.object.pixels(art) {
+        if let Some((_, art)) = screen::object_line(river, k, dy) {
+            for (x, _) in band.object.pixels(art) {
                 object[x as usize] = true;
                 c.object_on_bank[k] |= land(x);
             }
