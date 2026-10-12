@@ -372,11 +372,14 @@ impl River {
         Object::new(kind, x, facing_left)
     }
 
-    /// A house on the left or right bank.
+    /// A house on the left or right bank, or nothing if the bank is too
+    /// narrow for it.
     fn house(&self, band: &Band) -> Object {
         let seed = self.seed;
         let width = sprites::HOUSE.width();
-        let room = band.land.bank().saturating_sub(width);
+        let Some(room) = band.land.bank().checked_sub(width) else {
+            return Object::NONE;
+        };
         let x = seed.below(4, room as u32 + 1) as u8;
         let x = if seed.below(29, 2) == 0 { x } else { 160 - width - x };
         Object::new(Kind::House, x, seed.below(28, 2) == 0)

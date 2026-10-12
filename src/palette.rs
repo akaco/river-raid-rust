@@ -40,6 +40,10 @@ pub const CHIMNEY: Colour = 0x6E6E6E;
 pub const WALL: Colour = 0xEFE6D0;
 pub const WINDOW_LIT: Colour = 0x7FC8F8;
 pub const DOOR: Colour = 0x6B4423;
+pub const LEAVES: Colour = 0x2F6E22;
+pub const LEAVES_LIGHT: Colour = 0x6CBF4E;
+pub const LEAVES_DARK: Colour = 0x1E4A16;
+pub const TRUNK: Colour = 0x5A3A1E;
 pub const RAIL: Colour = 0xA8402A;
 pub const RAIL_POST: Colour = 0x5A1E10;
 /// A bridge's shadow on the water.

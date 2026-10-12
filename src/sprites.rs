@@ -162,20 +162,33 @@ pub const BRIDGE: Sprite = Sprite {
     ],
 };
 
-/// A house on the bank: roof, chimney, two windows and a door.
+/// A house on the bank with a tree beside it: roof, chimney, two windows
+/// and a door; a round tree on a trunk.
 pub const HOUSE: Sprite = Sprite {
-    first_line: 11,
-    colours: &[('R', ROOF), ('C', CHIMNEY), ('W', WALL), ('G', WINDOW_LIT), ('D', DOOR)],
+    first_line: 10,
+    colours: &[
+        ('R', ROOF),
+        ('C', CHIMNEY),
+        ('W', WALL),
+        ('G', WINDOW_LIT),
+        ('D', DOOR),
+        ('T', LEAVES),
+        ('L', LEAVES_LIGHT),
+        ('K', LEAVES_DARK),
+        ('B', TRUNK),
+    ],
     lines: &[
-        ".......RR...CC..",
-        ".....RRRRRR.CC..",
-        "...RRRRRRRRRRCC.",
-        ".RRRRRRRRRRRRRR.",
-        "RRRRRRRRRRRRRRRR",
-        ".WWWWWWWWWWWWWW.",
-        ".WGGWWWDDWWWGGW.",
-        ".WGGWWWDDWWWGGW.",
-        ".WWWWWWDDWWWWWW.",
+        "...................TTT..",
+        "..................TLLTT.",
+        ".......RR...CC...TTLTTTT",
+        ".....RRRRRR.CC...TTTTTTT",
+        "...RRRRRRRRRRCC..TTTTTKT",
+        ".RRRRRRRRRRRRRR..TTTTKKT",
+        "RRRRRRRRRRRRRRRR..TKKKT.",
+        ".WWWWWWWWWWWWWW.....B...",
+        ".WGGWWWDDWWWGGW.....B...",
+        ".WGGWWWDDWWWGGW.....B...",
+        ".WWWWWWDDWWWWWW....BBB..",
     ],
 };
 
