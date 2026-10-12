@@ -325,7 +325,7 @@ impl River {
     fn choose_object(&self, band: &Band) -> Object {
         let seed = self.seed;
         if band.bridge {
-            let x = 80 - sprites::BRIDGE.width() / 2;
+            let x = 80 - sprites::get("bridge").width() / 2;
             return Object::new(Kind::Bridge, x, false);
         }
 
@@ -376,7 +376,7 @@ impl River {
     /// narrow for it.
     fn house(&self, band: &Band) -> Object {
         let seed = self.seed;
-        let width = sprites::HOUSE.width();
+        let width = sprites::get("house").width();
         let Some(room) = band.land.bank().checked_sub(width) else {
             return Object::NONE;
         };

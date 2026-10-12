@@ -6,19 +6,19 @@ use delta_run::sprites::{self, Sprite};
 
 fn main() {
     let all: [(&Sprite, Colour); 13] = [
-        (&sprites::HELICOPTER_1, palette::WATER),
-        (&sprites::HELICOPTER_2, palette::WATER),
-        (&sprites::SHIP, palette::WATER),
-        (&sprites::JET, palette::WATER),
-        (&sprites::FUEL_TANK, palette::WATER),
-        (&sprites::HOUSE, palette::BANK),
-        (&sprites::BRIDGE, palette::WATER),
-        (&sprites::PLANE, palette::WATER),
-        (&sprites::PLANE_LEFT, palette::WATER),
-        (&sprites::PLANE_RIGHT, palette::WATER),
-        (&sprites::EXPLOSION_1, palette::WATER),
-        (&sprites::EXPLOSION_2, palette::WATER),
-        (&sprites::EXPLOSION_3, palette::WATER),
+        (sprites::get("helicopter_1"), palette::WATER),
+        (sprites::get("helicopter_2"), palette::WATER),
+        (sprites::get("ship"), palette::WATER),
+        (sprites::get("jet"), palette::WATER),
+        (sprites::get("fuel"), palette::WATER),
+        (sprites::get("house"), palette::BANK),
+        (sprites::get("bridge"), palette::WATER),
+        (sprites::get("plane"), palette::WATER),
+        (sprites::get("plane_left"), palette::WATER),
+        (sprites::get("plane_right"), palette::WATER),
+        (sprites::get("explosion_1"), palette::WATER),
+        (sprites::get("explosion_2"), palette::WATER),
+        (sprites::get("explosion_3"), palette::WATER),
     ];
     // each pixel 2 wide and 1 tall, then everything 4 times bigger; two rows
     let (sx, sy, gap, cell_h) = (8, 4, 4, 22);

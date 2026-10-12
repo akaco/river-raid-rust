@@ -93,3 +93,15 @@ fn every_game_has_the_same_river() {
     each_new_band(10, |_, band| b.push(*band));
     assert_eq!(a, b);
 }
+
+#[test]
+fn every_picture_is_there_and_fits_its_band() {
+    use delta_run::sprites;
+    for name in ["explosion_1", "explosion_2", "explosion_3", "jet", "helicopter_1", "helicopter_2", "ship", "bridge", "house", "fuel"] {
+        let s = sprites::get(name);
+        assert!(s.first_line as usize + s.lines.len() <= 32, "[{name}] runs past the bottom of its band");
+    }
+    for name in ["plane", "plane_left", "plane_right", "plane_crashed"] {
+        assert!(sprites::get(name).width() <= 8, "[{name}] is wider than 8 pixels");
+    }
+}

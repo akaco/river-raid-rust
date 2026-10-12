@@ -40,16 +40,16 @@ pub fn object_line(river: &River, band: usize, dy: u8) -> Option<(&'static Sprit
 
 fn sprite_line(sprite: &'static Sprite, dy: u8) -> Option<&'static str> {
     let i = dy.checked_sub(sprite.first_line)? as usize;
-    sprite.lines.get(i).copied()
+    sprite.lines.get(i).map(String::as_str)
 }
 
 fn plane_sprite(s: PlaneSprite) -> Option<&'static Sprite> {
     match s {
         PlaneSprite::Hidden => None,
-        PlaneSprite::Straight => Some(&sprites::PLANE),
-        PlaneSprite::BankedLeft => Some(&sprites::PLANE_LEFT),
-        PlaneSprite::BankedRight => Some(&sprites::PLANE_RIGHT),
-        PlaneSprite::Crashed => Some(&sprites::PLANE_CRASHED),
+        PlaneSprite::Straight => Some(sprites::get("plane")),
+        PlaneSprite::BankedLeft => Some(sprites::get("plane_left")),
+        PlaneSprite::BankedRight => Some(sprites::get("plane_right")),
+        PlaneSprite::Crashed => Some(sprites::get("plane_crashed")),
     }
 }
 
@@ -58,7 +58,7 @@ pub fn plane_pixels(game: &Game, y: u8) -> impl Iterator<Item = u8> {
     let art = plane_sprite(game.plane.sprite).and_then(|s| sprite_line(s, y.checked_sub(sprites::PLANE_TOP)?));
     let x0 = game.plane.x;
     art.into_iter()
-        .flat_map(move |art| art.bytes().enumerate().filter(|(_, b)| *b == b'#').map(move |(i, _)| (x0 as usize + i) as u8 % WIDTH))
+        .flat_map(move |art| art.bytes().enumerate().filter(|(_, b)| *b != b'.').map(move |(i, _)| (x0 as usize + i) as u8 % WIDTH))
 }
 
 /// The missile's pixel on line `y`, if it is there. It is 8 lines tall and
@@ -121,7 +121,7 @@ pub fn draw(game: &Game, c: &mut impl Canvas) {
     // status bar: score, fuel gauge, spare planes and the title
     c.rect(0, STATUS_TOP, WIDTH, 1, palette::BLACK);
     c.rect(0, STATUS_TOP + 1, WIDTH, STATUS_BOTTOM - STATUS_TOP, palette::STATUS);
-    let player = game.plane_colour();
+    let player = game.score_colour();
     for (i, digit) in game.score.digits.iter().enumerate() {
         if let Some(d) = digit {
             let ch = if *d < 10 { (b'0' + d) as char } else { '!' };

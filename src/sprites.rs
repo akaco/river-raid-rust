@@ -1,19 +1,18 @@
-//! Pictures: everything is drawn from these small pixel-art images.
-//!
-//! Each letter in a picture is one pixel, in the colour the sprite's
-//! `colours` list gives it; `.` is see-through. Pixels are twice as wide as
-//! they are tall, so the pictures look squashed in the source. River
-//! objects face right and say on which line of their 32-line band they
-//! start.
+//! Pictures. Every picture is in `assets/sprites.txt`, as letters (one per
+//! pixel) with the colour of each letter; see the top of that file. The
+//! file is built into the game, so changing a picture needs no code.
 
-use crate::palette::*;
+use std::collections::HashMap;
+use std::sync::LazyLock;
+
+use crate::palette::{BLACK, Colour};
 
 pub struct Sprite {
     /// First line, counted from the top of its river band (or of the plane).
     pub first_line: u8,
     /// What each letter in the picture stands for.
-    pub colours: &'static [(char, Colour)],
-    pub lines: &'static [&'static str],
+    pub colours: Vec<(u8, Colour)>,
+    pub lines: Vec<String>,
 }
 
 impl Sprite {
@@ -24,230 +23,60 @@ impl Sprite {
 
     /// The colour of a letter in the picture.
     pub fn colour(&self, letter: u8) -> Colour {
-        self.colours.iter().find(|(c, _)| *c as u8 == letter).map_or(BLACK, |&(_, colour)| colour)
+        self.colours.iter().find(|(c, _)| *c == letter).map_or(BLACK, |&(_, colour)| colour)
     }
 }
-
-const BLAST: &[(char, Colour)] = &[('F', FIRE), ('S', SPARK), ('W', FLARE), ('K', SMOKE)];
-
-pub const EXPLOSION_1: Sprite = Sprite {
-    first_line: 12,
-    colours: BLAST,
-    lines: &[".......SS.......", ".....SFFFFS.....", "....SFFWWFFS....", ".....SFFFFS.....", ".......SS......."],
-};
-
-pub const EXPLOSION_2: Sprite = Sprite {
-    first_line: 10,
-    colours: BLAST,
-    lines: &[
-        "..S.....S.....S.",
-        "....F..FF..F....",
-        "..F..FFSSFF..F..",
-        "S...FSSWWSSF...S",
-        "...FFSWWWWSFF...",
-        "S...FSSWWSSF...S",
-        "..F..FFSSFF..F..",
-        "....F..FF..F....",
-        ".S.....S.....S..",
-    ],
-};
-
-pub const EXPLOSION_3: Sprite = Sprite {
-    first_line: 10,
-    colours: BLAST,
-    lines: &[
-        "...K.......K....",
-        "......K..K......",
-        ".K....KKKK....K.",
-        "....KKK..KKK....",
-        ".K....KKKK....K.",
-        "......K..K......",
-        "...K.......K....",
-    ],
-};
-
-/// Enemy jet, side on: tail fin, canopy, pointed nose, swept wing, exhaust.
-pub const JET: Sprite = Sprite {
-    first_line: 12,
-    colours: &[('B', STEEL), ('D', STEEL_DARK), ('G', CANOPY), ('F', FIRE)],
-    lines: &[
-        "DD..............",
-        "DDD.............",
-        "DDDD.....GGG....",
-        ".DBBBBBBBBGGBB..",
-        "FBBBBBBBBBBBBBBB",
-        ".DBBBBDDDDBBBB..",
-        ".....DDDDD......",
-        "....DDDD........",
-    ],
-};
-
-const HELICOPTER_COLOURS: &[(char, Colour)] = &[('R', ROTOR), ('M', SKID), ('B', OLIVE), ('D', OLIVE_DARK), ('G', CANOPY), ('S', SKID)];
-
-/// Helicopter, side on: main rotor, tail boom and rotor, glass nose,
-/// skids. Two frames so the rotors spin.
-pub const HELICOPTER_1: Sprite = Sprite {
-    first_line: 11,
-    colours: HELICOPTER_COLOURS,
-    lines: &[
-        "RRRRRRRRRRRRRRR.",
-        "........M.......",
-        "......BBBBBBB...",
-        "RD...BBBBBBGGG..",
-        "RDDBBBBBBBBGGGG.",
-        "R....DBBBBBBBBB.",
-        "......DDDDDDDD..",
-        ".......S....S...",
-        ".....SSSSSSSSSS.",
-    ],
-};
-
-pub const HELICOPTER_2: Sprite = Sprite {
-    first_line: 11,
-    colours: HELICOPTER_COLOURS,
-    lines: &[
-        "....RRRRRRRRR...",
-        "........M.......",
-        "......BBBBBBB...",
-        ".D...BBBBBBGGG..",
-        "RDDBBBBBBBBGGGG.",
-        ".....DBBBBBBBBB.",
-        "......DDDDDDDD..",
-        ".......S....S...",
-        ".....SSSSSSSSSS.",
-    ],
-};
-
-/// Patrol boat, side on: mast, cabin with windows, funnel, grey hull with
-/// a red waterline, bow to the right.
-pub const SHIP: Sprite = Sprite {
-    first_line: 12,
-    colours: &[('M', SKID), ('W', CABIN), ('G', WINDOW), ('F', FUNNEL), ('H', HULL), ('K', WATERLINE)],
-    lines: &[
-        "........M...............",
-        "........M.......FF......",
-        "....WWWWWWWWW...FF......",
-        "....WGGWGGWGGW..FF......",
-        "...WWWWWWWWWWWWWWWWW....",
-        "HHHHHHHHHHHHHHHHHHHHHHHH",
-        "HHHHHHHHHHHHHHHHHHHHHH..",
-        ".KKKKKKKKKKKKKKKKKKKK...",
-    ],
-};
-
-/// Bridge, seen from above: the road carried across the river between two
-/// red railings, with its shadow on the water.
-pub const BRIDGE: Sprite = Sprite {
-    first_line: 8,
-    colours: &[('E', RAIL), ('P', RAIL_POST), ('A', ROAD), ('Y', ROAD_LINE), ('S', SHADOW)],
-    lines: &[
-        "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
-        "PEEEPEEEPEEEPEEEPEEEPEEEPEEEPEEE",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY",
-        "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "PEEEPEEEPEEEPEEEPEEEPEEEPEEEPEEE",
-        "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
-        "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
-        "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
-    ],
-};
-
-/// A house on the bank with a tree beside it: roof, chimney, two windows
-/// and a door; a round tree on a trunk.
-pub const HOUSE: Sprite = Sprite {
-    first_line: 10,
-    colours: &[
-        ('R', ROOF),
-        ('C', CHIMNEY),
-        ('W', WALL),
-        ('G', WINDOW_LIT),
-        ('D', DOOR),
-        ('T', LEAVES),
-        ('L', LEAVES_LIGHT),
-        ('K', LEAVES_DARK),
-        ('B', TRUNK),
-    ],
-    lines: &[
-        "...................TTT..",
-        "..................TLLTT.",
-        ".......RR...CC...TTLTTTT",
-        ".....RRRRRR.CC...TTTTTTT",
-        "...RRRRRRRRRRCC..TTTTTKT",
-        ".RRRRRRRRRRRRRR..TTTTKKT",
-        "RRRRRRRRRRRRRRRR..TKKKT.",
-        ".WWWWWWWWWWWWWW.....B...",
-        ".WGGWWWDDWWWGGW.....B...",
-        ".WGGWWWDDWWWGGW.....B...",
-        ".WWWWWWDDWWWWWW....BBB..",
-    ],
-};
-
-/// Fuel: a red jerrycan with a yellow cap. Fly over it to refuel, or shoot
-/// it for points.
-pub const FUEL_TANK: Sprite = Sprite {
-    first_line: 10,
-    colours: &[('R', CAN), ('L', CAN_LIGHT), ('H', CAN_DARK), ('C', CAN_CAP)],
-    lines: &[
-        ".HHHHH..CC",
-        ".H...H..CC",
-        "RRRRRRRRRR",
-        "RLRRRRRRLR",
-        "RRLRRRRLRR",
-        "RRRLRRLRRR",
-        "RRRRLLRRRR",
-        "RRRLRRLRRR",
-        "RRLRRRRLRR",
-        "RLRRRRRRLR",
-        "RRRRRRRRRR",
-        ".RRRRRRRR.",
-    ],
-};
 
 /// The player's plane is drawn from this line of the screen down.
 pub const PLANE_TOP: u8 = 182;
 
-/// (The plane is drawn in its player's colour.)
-const PLANE_COLOURS: &[(char, Colour)] = &[('#', PLAYER_1)];
+static PICTURES: LazyLock<HashMap<String, Sprite>> = LazyLock::new(|| parse(include_str!("../assets/sprites.txt")));
 
-pub const PLANE: Sprite = Sprite {
-    first_line: 0,
-    colours: PLANE_COLOURS,
-    lines: &[
-        "...#....", "...#....", "..###...", "..###...", ".#####..", "#######.", "##.#.##.", "...#....", "...#....", "..###...", ".##.##..",
-    ],
-};
+/// The picture called `name` in `assets/sprites.txt`.
+pub fn get(name: &str) -> &'static Sprite {
+    PICTURES.get(name).unwrap_or_else(|| panic!("no picture called [{name}] in assets/sprites.txt"))
+}
 
-pub const PLANE_RIGHT: Sprite = Sprite {
-    first_line: 0,
-    colours: PLANE_COLOURS,
-    lines: &[
-        "...#....", "...#....", "..###...", "..###...", "..####..", ".#####..", "..#.##..", "...#....", "...#....", "..###...", "...##...",
-    ],
-};
-
-pub const PLANE_LEFT: Sprite = Sprite {
-    first_line: 0,
-    colours: PLANE_COLOURS,
-    lines: &[
-        "...#....", "...#....", "..###...", "..###...", ".####...", ".#####..", ".##.#...", "...#....", "...#....", "..###...", "..##....",
-    ],
-};
-
-pub const PLANE_CRASHED: Sprite = Sprite {
-    first_line: 1,
-    colours: PLANE_COLOURS,
-    lines: &["#.....#.", "..#.#...", ".#...#..", "...#....", "#.#.#.#.", "...#....", ".#...#..", "..#.#...", "#.....#."],
-};
+/// Reads the pictures file. Mistakes in it stop the game with a message
+/// saying where.
+pub fn parse(text: &str) -> HashMap<String, Sprite> {
+    let mut pictures = HashMap::new();
+    let mut current: Option<(String, Sprite)> = None;
+    for (n, line) in text.lines().enumerate() {
+        let line = line.trim();
+        let fail = |what: &str| -> ! { panic!("assets/sprites.txt line {}: {what}: {line}", n + 1) };
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        if let Some(name) = line.strip_prefix('[').and_then(|l| l.strip_suffix(']')) {
+            pictures.extend(current.take());
+            current = Some((name.to_string(), Sprite { first_line: 0, colours: vec![], lines: vec![] }));
+            continue;
+        }
+        let Some((_, sprite)) = current.as_mut() else { fail("expected a [name] first") };
+        if let Some((key, value)) = line.split_once('=') {
+            let (key, value) = (key.trim(), value.trim());
+            if key == "first_line" {
+                sprite.first_line = value.parse().unwrap_or_else(|_| fail("not a number"));
+            } else if key.len() == 1 && key != "." {
+                let colour = Colour::from_str_radix(value, 16).unwrap_or_else(|_| fail("colour should be RRGGBB"));
+                sprite.colours.push((key.as_bytes()[0], colour));
+            } else {
+                fail("expected first_line = N or X = RRGGBB");
+            }
+        } else {
+            if sprite.lines.first().is_some_and(|first| first.len() != line.len()) {
+                fail("this row is not as wide as the first");
+            }
+            if let Some(b) = line.bytes().find(|&b| b != b'.' && !sprite.colours.iter().any(|(c, _)| *c == b)) {
+                fail(&format!("letter '{}' has no colour", b as char));
+            }
+            sprite.lines.push(line.to_string());
+        }
+    }
+    pictures.extend(current);
+    pictures
+}
 
 /// A 5 x 7 pixel font for the score and the status bar.
 pub fn glyph(c: char) -> &'static [&'static str; 7] {

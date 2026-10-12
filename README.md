@@ -1,7 +1,7 @@
 # Delta Run
 
 A small river shooter written in Rust. Fly up a river, shoot boats,
-helicopters, jets and bridges, and fly over fuel tanks before you run dry.
+helicopters, jets and bridges, and fly over fuel pumps before you run dry.
 
 ![Delta Run](docs/screenshot.png)
 
@@ -42,7 +42,7 @@ fire, and use the START and PLAYERS buttons along the top.
 
 ## How to play
 
-- Fuel goes down all the time. Fly over a fuel tank to fill up; shooting
+- Fuel goes down all the time. Fly over a fuel pump to fill up; shooting
   it gives points but no fuel.
 - Hitting a bank, a boat, a helicopter, a jet or a bridge costs a plane.
 - Each bridge is a checkpoint: after a crash you start again from the last
@@ -58,10 +58,12 @@ src/
   lib.rs      the game as a library (no window needed)
   game.rs     rules: phases, fuel, score, lives, steering, missiles
   river.rs    the river: six bands on screen, the level generator
-  objects.rs  boats, helicopters, jets, fuel tanks, houses, bridges
+  objects.rs  boats, helicopters, jets, fuel pumps, houses, bridges
   collide.rs  what touches what, by overlapping pixels
   screen.rs   where things are on screen, and drawing to any Canvas
-  sprites.rs  all pictures and the font, as text pixel art
+  sprites.rs  reads the pictures file; the font
+assets/
+  sprites.txt every picture, as letters you can edit
 examples/
   sprite_sheet.rs  draws every sprite into one picture
   palette.rs  colours
@@ -74,9 +76,14 @@ The game runs at a fixed 60 frames a second and draws a 160 x 238 pixel
 picture, which the window scales to fit. Because `game.rs` never touches
 the window, the same code can be tested headless and run on phones.
 
-All the pictures are text pixel art in `src/sprites.rs`, one letter per
-pixel. To see them all at once:
-`cargo run --example sprite_sheet > sprites.ppm`.
+## Change the pictures
+
+Every picture (plane, enemies, fuel pump, house, bridge, explosions) is in
+[assets/sprites.txt](assets/sprites.txt): one letter per pixel, with the
+colour of each letter written above the picture. Edit it and
+`cargo run --release` again; no code to change. If something in the file
+is wrong, the game stops and says which line. To see every picture at
+once: `cargo run --example sprite_sheet > sprites.ppm`.
 
 ![All sprites](docs/sprites.png)
 

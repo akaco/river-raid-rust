@@ -42,16 +42,16 @@ impl Kind {
     pub fn sprite(self) -> Option<&'static Sprite> {
         Some(match self {
             Kind::None | Kind::Explosion(0) => return None,
-            Kind::Explosion(1) => &sprites::EXPLOSION_1,
-            Kind::Explosion(2) => &sprites::EXPLOSION_2,
-            Kind::Explosion(_) => &sprites::EXPLOSION_3,
-            Kind::Jet => &sprites::JET,
-            Kind::Helicopter(0) => &sprites::HELICOPTER_1,
-            Kind::Helicopter(_) => &sprites::HELICOPTER_2,
-            Kind::Ship => &sprites::SHIP,
-            Kind::Bridge => &sprites::BRIDGE,
-            Kind::House => &sprites::HOUSE,
-            Kind::FuelDepot => &sprites::FUEL_TANK,
+            Kind::Explosion(1) => sprites::get("explosion_1"),
+            Kind::Explosion(2) => sprites::get("explosion_2"),
+            Kind::Explosion(_) => sprites::get("explosion_3"),
+            Kind::Jet => sprites::get("jet"),
+            Kind::Helicopter(0) => sprites::get("helicopter_1"),
+            Kind::Helicopter(_) => sprites::get("helicopter_2"),
+            Kind::Ship => sprites::get("ship"),
+            Kind::Bridge => sprites::get("bridge"),
+            Kind::House => sprites::get("house"),
+            Kind::FuelDepot => sprites::get("fuel"),
         })
     }
 

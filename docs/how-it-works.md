@@ -56,7 +56,7 @@ every section ends with a bridge.
 - From section 2, one width in five opens or closes an island.
 - Just before a bridge any island closes, so the bridge spans one channel.
 - Objects: the further you get, the more likely a band holds an enemy
-  rather than a fuel tank or a house. Jets appear from section 3.
+  rather than a fuel pump or a house. Jets appear from section 3.
 
 When you blow up a bridge, the generator's state is saved as a checkpoint.
 After a crash the river is rebuilt from that checkpoint, so you replay the

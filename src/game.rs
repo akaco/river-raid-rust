@@ -282,9 +282,14 @@ impl Game {
         self.sound.update(flying, self.plane.speed, self.fuel, up, down);
     }
 
-    /// The colour of the plane, its missile and the score.
+    /// The colour of the plane and its missile.
     pub fn plane_colour(&self) -> Colour {
         if self.player == 0 { palette::PLAYER_1 } else { palette::PLAYER_2 }
+    }
+
+    /// The colour of the current player's score and spare planes.
+    pub fn score_colour(&self) -> Colour {
+        if self.player == 0 { palette::PLAYER_1_TEXT } else { palette::PLAYER_2 }
     }
 
     /// RESET and SELECT, then scrolling.

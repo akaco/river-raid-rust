@@ -1,0 +1,262 @@
+# Every picture in the game. Change one here and run the game again.
+#
+# Each picture starts with its [name], then:
+#   first_line = N   the line of its 32-line river band it starts on
+#                    (for the plane: lines below the top of the plane)
+#   X = RRGGBB       what colour each letter stands for
+# and then the picture, one letter per pixel; '.' is see-through. Lines
+# starting with '#' are notes, so don't use '#' as a letter.
+# All rows of a picture must be the same width. Pixels are twice as wide
+# as they are tall, so pictures look squashed here. Things in the river
+# face right; the game mirrors them when they face left.
+
+
+# Explosion, three frames.
+[explosion_1]
+first_line = 12
+F = FF7A1A
+S = FFE066
+W = FFFFFF
+K = 9A9A9A
+.......SS.......
+.....SFFFFS.....
+....SFFWWFFS....
+.....SFFFFS.....
+.......SS.......
+
+[explosion_2]
+first_line = 10
+F = FF7A1A
+S = FFE066
+W = FFFFFF
+K = 9A9A9A
+..S.....S.....S.
+....F..FF..F....
+..F..FFSSFF..F..
+S...FSSWWSSF...S
+...FFSWWWWSFF...
+S...FSSWWSSF...S
+..F..FFSSFF..F..
+....F..FF..F....
+.S.....S.....S..
+
+[explosion_3]
+first_line = 10
+F = FF7A1A
+S = FFE066
+W = FFFFFF
+K = 9A9A9A
+...K.......K....
+......K..K......
+.K....KKKK....K.
+....KKK..KKK....
+.K....KKKK....K.
+......K..K......
+...K.......K....
+
+# Enemy jet, side on, facing right.
+[jet]
+first_line = 12
+B = D9DDE3
+D = 7E8794
+G = 4FC3F7
+F = FF7A1A
+DD..............
+DDD.............
+DDDD.....GGG....
+.DBBBBBBBBGGBB..
+FBBBBBBBBBBBBBBB
+.DBBBBDDDDBBBB..
+.....DDDDD......
+....DDDD........
+
+# Helicopter, side on, facing right. Two frames so the rotors spin.
+[helicopter_1]
+first_line = 11
+R = C8CCD2
+M = 2A2A2A
+B = 6B8E3D
+D = 3F5A26
+G = 4FC3F7
+S = 2A2A2A
+RRRRRRRRRRRRRRR.
+........M.......
+......BBBBBBB...
+RD...BBBBBBGGG..
+RDDBBBBBBBBGGGG.
+R....DBBBBBBBBB.
+......DDDDDDDD..
+.......S....S...
+.....SSSSSSSSSS.
+
+[helicopter_2]
+first_line = 11
+R = C8CCD2
+M = 2A2A2A
+B = 6B8E3D
+D = 3F5A26
+G = 4FC3F7
+S = 2A2A2A
+....RRRRRRRRR...
+........M.......
+......BBBBBBB...
+.D...BBBBBBGGG..
+RDDBBBBBBBBGGGG.
+.....DBBBBBBBBB.
+......DDDDDDDD..
+.......S....S...
+.....SSSSSSSSSS.
+
+# Patrol boat, side on, bow to the right.
+[ship]
+first_line = 12
+M = 2A2A2A
+W = F0F0F0
+G = 1E3A6E
+F = E07A22
+H = 4A4F57
+K = B83A2E
+........M...............
+........M.......FF......
+....WWWWWWWWW...FF......
+....WGGWGGWGGW..FF......
+...WWWWWWWWWWWWWWWWW....
+HHHHHHHHHHHHHHHHHHHHHHHH
+HHHHHHHHHHHHHHHHHHHHHH..
+.KKKKKKKKKKKKKKKKKKKK...
+
+# Bridge, seen from above: the road across the river, with its shadow.
+[bridge]
+first_line = 8
+E = A8402A
+P = 5A1E10
+A = 5A5A5A
+Y = E8D44D
+S = 1C3A8A
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+PEEEPEEEPEEEPEEEPEEEPEEEPEEEPEEE
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+PEEEPEEEPEEEPEEEPEEEPEEEPEEEPEEE
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+
+# A house with a tree beside it, on the bank (mirrored at random).
+[house]
+first_line = 10
+R = B83A2E
+C = 6E6E6E
+W = EFE6D0
+G = 7FC8F8
+D = 6B4423
+T = 2F6E22
+L = 6CBF4E
+K = 1E4A16
+B = 5A3A1E
+...................TTT..
+..................TLLTT.
+.......RR...CC...TTLTTTT
+.....RRRRRR.CC...TTTTTTT
+...RRRRRRRRRRCC..TTTTTKT
+.RRRRRRRRRRRRRR..TTTTKKT
+RRRRRRRRRRRRRRRR..TKKKT.
+.WWWWWWWWWWWWWW.....B...
+.WGGWWWDDWWWGGW.....B...
+.WGGWWWDDWWWGGW.....B...
+.WWWWWWDDWWWWWW....BBB..
+
+# Fuel: fly over it to refuel, or shoot it for points.
+[fuel]
+first_line = 9
+R = F2C230
+W = F2F2F2
+Y = D62828
+H = 1E1E1E
+N = 1E1E1E
+B = 8A6A10
+RRRRR...
+RRRRRN..
+RWWWR.N.
+RWWWR..H
+RWWWR..H
+RRRRR..H
+RYYYR..H
+RRRRR..H
+RRRRR..H
+RRRRR..H
+RRRRR..H
+RRRRR.H.
+RRRRRH..
+RRRRR...
+BBBBBBB.
+
+# The player's plane: straight, banking right, banking left, crashed.
+# (Drawn in the player's colour, whatever colour is given here.)
+[plane]
+first_line = 0
+P = 141414
+...P....
+...P....
+..PPP...
+..PPP...
+.PPPPP..
+PPPPPPP.
+PP.P.PP.
+...P....
+...P....
+..PPP...
+.PP.PP..
+
+[plane_right]
+first_line = 0
+P = 141414
+...P....
+...P....
+..PPP...
+..PPP...
+..PPPP..
+.PPPPP..
+..P.PP..
+...P....
+...P....
+..PPP...
+...PP...
+
+[plane_left]
+first_line = 0
+P = 141414
+...P....
+...P....
+..PPP...
+..PPP...
+.PPPP...
+.PPPPP..
+.PP.P...
+...P....
+...P....
+..PPP...
+..PP....
+
+[plane_crashed]
+first_line = 1
+P = 141414
+P.....P.
+..P.P...
+.P...P..
+...P....
+P.P.P.P.
+...P....
+.P...P..
+..P.P...
+P.....P.
