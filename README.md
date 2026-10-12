@@ -40,8 +40,8 @@ libasound2-dev` on Debian/Ubuntu). To build without sound:
 | T | Show the touch controls (the mouse works as a finger) |
 
 On a phone or tablet: a pad on the left steers and changes speed, a button
-on the right fires, and small buttons start a game, pick players, pause
-and mute. [docs/mobile.md](docs/mobile.md) has the controls and how to
+on the right fires, and pause and sound are in the top corner. Game
+controllers work too. [docs/mobile.md](docs/mobile.md) has the controls and how to
 build for iPhone, iPad and Android.
 
 ## How to play

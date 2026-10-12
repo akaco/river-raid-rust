@@ -157,6 +157,7 @@ name = "delta-run"
 version = "0.1.0"
 dependencies = [
  "macroquad",
+ "objc-rs",
  "tinyaudio",
 ]
 

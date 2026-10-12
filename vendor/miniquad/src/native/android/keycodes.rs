@@ -116,6 +116,11 @@ pub fn translate_keycode(keycode: u32) -> KeyCode {
         0x9e => KeyCode::KpDecimal,    // KEYCODE_NUMPAD_DOT
         0xa0 => KeyCode::KpEnter,      // KEYCODE_NUMPAD_ENTER
         0xa1 => KeyCode::KpEqual,      // KEYCODE_NUMPAD_EQUALS
+        // Delta Run: game controller buttons, as the game's keys
+        0x60 | 0x61 | 0x63 | 0x64 => KeyCode::Space, // KEYCODE_BUTTON_A, B, X, Y
+        0x66 | 0x67 | 0x68 | 0x69 => KeyCode::Space, // KEYCODE_BUTTON_L1, R1, L2, R2
+        0x6c => KeyCode::Pause,                      // KEYCODE_BUTTON_START
+        0x6d => KeyCode::Tab,                        // KEYCODE_BUTTON_SELECT
         _ => KeyCode::Unknown,
     }
 }

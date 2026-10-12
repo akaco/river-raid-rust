@@ -13,5 +13,9 @@ which is what UIKit passes to `touchesBegan`/`Moved`/`Ended`/`Cancelled`.
 The root `Cargo.toml` uses this copy through `[patch.crates-io]`. Drop it
 once a miniquad release has the fix.
 
+In `src/native/android/keycodes.rs`, game controller buttons now map to
+the game's keys (A/B/X/Y and the shoulder buttons to Space, Start to
+Pause, Select to Tab); upstream reported them as unknown keys.
+
 Also `#![allow(warnings)]` at the top of `src/lib.rs`, so building the game
 does not print miniquad's own warnings.
