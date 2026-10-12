@@ -447,9 +447,7 @@ impl Game {
         self.fuel -= 0x20;
         self.steer();
         self.change_speed();
-        if let Some(band) = c.missile_hit
-            && self.river.bands[band].object.kind.is_solid()
-        {
+        if let Some(band) = c.missile_hit.filter(|&b| self.river.bands[b].object.kind.is_solid()) {
             self.destroy(band, 1);
             return;
         }

@@ -22,7 +22,8 @@ cd river-raid-rust
 cargo run --release
 ```
 
-Tested on macOS (Apple Silicon) and Linux. On Linux you may need the usual
+Tested on macOS (Apple Silicon) and Linux. For phones and tablets see
+[docs/mobile.md](docs/mobile.md). On Linux you may need the usual
 window and sound libraries (`libx11-dev libxi-dev libgl1-mesa-dev
 libasound2-dev` on Debian/Ubuntu). To build without sound:
 `cargo run --release --no-default-features`.
@@ -36,9 +37,12 @@ libasound2-dev` on Debian/Ubuntu). To build without sound:
 | 1 | Straight missiles on/off (off: missiles follow the plane) |
 | P | Pause |
 | M | Mute |
+| T | Show the touch controls (the mouse works as a finger) |
 
-On a touch screen: drag on the left half to steer, touch the right half to
-fire, and use the START and PLAYERS buttons along the top.
+On a phone or tablet: a pad on the left steers and changes speed, a button
+on the right fires, and small buttons start a game, pick players, pause
+and mute. [docs/mobile.md](docs/mobile.md) has the controls and how to
+build for iPhone, iPad and Android.
 
 ## How to play
 
@@ -62,6 +66,7 @@ src/
   collide.rs  what touches what, by overlapping pixels
   screen.rs   where things are on screen, and drawing to any Canvas
   sprites.rs  reads the pictures file; the font
+  touch.rs    on-screen controls: layout for any screen, the pad
 assets/
   sprites.txt every picture, as letters you can edit
 examples/
@@ -70,6 +75,8 @@ examples/
   sound.rs    sound effects  ┐ our own little synthesizer:
   synth.rs    square + noise ┘ two voices
   main.rs     the macroquad window, keys, touch, audio thread
+ios/          Xcode project (XcodeGen) for iPhone and iPad
+vendor/       miniquad with an iOS multi-touch fix
 ```
 
 The game runs at a fixed 60 frames a second and draws a 160 x 238 pixel
@@ -101,11 +108,6 @@ cargo test --release
   river.
 - `tests/play.rs` lets a simple autopilot play 60,000 frames (about 17
   minutes) and checks it gets past the second bridge.
-
-## Plans
-
-- iPhone, iPad and Android builds (macroquad supports both).
-- Better touch controls.
 
 ## Licence
 

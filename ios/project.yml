@@ -1,0 +1,57 @@
+# Xcode project for iPhone and iPad, made with XcodeGen:
+#   brew install xcodegen && cd ios && xcodegen
+# Then open DeltaRun.xcodeproj. See docs/mobile.md.
+#
+# The game itself is built by cargo (build-rust.sh); Xcode only wraps it in
+# an app, signs it and puts it on the phone. main.c is a stand-in that the
+# Rust program replaces before signing.
+name: DeltaRun
+options:
+  bundleIdPrefix: io.github.akaco
+  deploymentTarget:
+    iOS: "15.0"
+settings:
+  base:
+    # Pick your team in Xcode (Signing & Capabilities), or put its ID here.
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    DEBUG_INFORMATION_FORMAT: dwarf
+    ENABLE_BITCODE: NO
+targets:
+  DeltaRun:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: main.c
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.akaco.deltarun
+        PRODUCT_NAME: DeltaRun
+        TARGETED_DEVICE_FAMILY: "1,2"
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        # The simulator on an Apple Silicon Mac runs arm64 only.
+        EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: Delta Run
+        UILaunchScreen: {}
+        UIRequiresFullScreen: true
+        UIStatusBarHidden: true
+        UIViewControllerBasedStatusBarAppearance: false
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    postBuildScripts:
+      - name: Build the game with cargo
+        script: '"$SRCROOT/build-rust.sh"'
+        basedOnDependencyAnalysis: false
