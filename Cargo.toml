@@ -1,0 +1,26 @@
+[package]
+name = "delta-run"
+version = "0.1.0"
+edition = "2024"
+description = "Fly up a river, shoot what is in the way, keep the tank full: a small retro game in Rust"
+license = "MIT"
+repository = "https://github.com/akaco/river-raid-rust"
+
+[lib]
+name = "delta_run"
+
+[[bin]]
+name = "delta-run"
+path = "src/main.rs"
+
+[features]
+default = ["sound"]
+# Sound output. Build with --no-default-features to play silently.
+sound = ["dep:tinyaudio"]
+
+[dependencies]
+macroquad = "0.4.14"
+tinyaudio = { version = "1.1.0", optional = true }
+
+[profile.release]
+lto = true
