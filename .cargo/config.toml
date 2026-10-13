@@ -1,0 +1,7 @@
+# Google Play needs the game's library laid out for phones with 16 KB memory
+# pages (Android 15 and later). NDK r28 does this by itself; r25 needs this.
+[target.aarch64-linux-android]
+rustflags = ["-Clink-arg=-zmax-page-size=16384", "-Clink-arg=-zcommon-page-size=16384"]
+
+[target.armv7-linux-androideabi]
+rustflags = ["-Clink-arg=-zmax-page-size=16384", "-Clink-arg=-zcommon-page-size=16384"]

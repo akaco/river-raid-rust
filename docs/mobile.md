@@ -1,6 +1,8 @@
 # Phones and tablets
 
-The same code runs on iPhone, iPad and Android. Only the build differs.
+The same code runs on iPhone, iPad, Mac and Android. Only the build
+differs. To put it in the App Store and Google Play, see
+[publishing.md](publishing.md).
 
 ## Screen and controls
 
@@ -90,6 +92,11 @@ phone and open it (allow installing from that app when asked), or
 The version of cargo-quad-apk on crates.io (0.1.4) cannot read this
 project's `Cargo.toml`, hence `--git`.
 
+Google Play takes app bundles (.aab), not APKs: `android/build-aab.sh` makes
+one from what the APK build leaves behind (see
+[publishing.md](publishing.md)). `.cargo/config.toml` lays the game's
+library out for phones with 16 KB memory pages, which Play requires.
+
 ## iPhone and iPad
 
 You need a Mac with Xcode, Rust and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
@@ -112,6 +119,14 @@ simulator instead.
 
 Xcode does not compile the game itself: `ios/build-rust.sh` runs cargo and
 puts the result into the app before Xcode signs it.
+
+## Mac
+
+The same Xcode project has a Mac app, `DeltaRunMac`: pick it at the top of
+Xcode, then "My Mac", and press Run. It runs on Macs with Apple chips and
+on Intel Macs (`build-rust.sh` builds both and joins them). For the Mac App
+Store it runs in Apple's sandbox, which needs nothing extra because the
+game reads and writes no files.
 
 ## The patched miniquad
 

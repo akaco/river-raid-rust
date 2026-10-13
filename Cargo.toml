@@ -1,6 +1,6 @@
 [package]
 name = "delta-run"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 description = "Fly up a river, shoot what is in the way, keep the tank full: a small retro game in Rust"
 license = "MIT"
@@ -29,12 +29,20 @@ objc = { version = "0.2", package = "objc-rs" }
 [profile.release]
 lto = true
 
-# Android: `cargo quad-apk build --release` (see docs/mobile.md).
+# Android: `cargo quad-apk build --release` (see docs/mobile.md), then
+# `sh android/build-aab.sh` for Google Play (see docs/publishing.md).
+# The version shown to players is the package version above; raise
+# version_code by one for every upload to Google Play.
 [package.metadata.android]
 package_name = "io.github.akaco.deltarun"
 label = "Delta Run"
+version_code = 1
+icon = "@mipmap/ic_launcher"
+res = "android/res"
+# built against Android 12 (the SDK the build needs), made for Android 16,
+# which Google Play requires from 31 August 2026
 android_version = 31
-target_sdk_version = 31
+target_sdk_version = 36
 min_sdk_version = 26
 build_targets = ["aarch64-linux-android", "armv7-linux-androideabi"]
 fullscreen = true
