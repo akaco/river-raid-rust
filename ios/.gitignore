@@ -1,3 +1,5 @@
 # made by xcodegen
 DeltaRun.xcodeproj/
 Info.plist
+MacInfo.plist
+DeltaRun.entitlements

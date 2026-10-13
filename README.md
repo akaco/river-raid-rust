@@ -49,11 +49,13 @@ too.
 
 - **Android**: `cargo quad-apk build --release` makes an APK you can
   install on your phone.
-- **iPhone and iPad**: `cd ios && xcodegen`, open the project in Xcode,
-  pick your team and press Run.
+- **iPhone, iPad and Mac**: `cd ios && xcodegen`, open the project in
+  Xcode, pick your team and press Run.
 
 [docs/mobile.md](docs/mobile.md) has the full steps, the controls, and
 why the screen is laid out the way it is.
+[docs/publishing.md](docs/publishing.md) is the way into the App Store and
+Google Play.
 
 ## How to play
 
@@ -86,9 +88,12 @@ assets/
   sprites.txt  every picture, as letters you can edit
 examples/
   sprite_sheet.rs  draws every sprite into one picture
+  store_art.rs     draws the app icon and store pictures
 tests/         river and autopilot tests
-docs/          how it works, phones and tablets
-ios/           Xcode project (XcodeGen) for iPhone and iPad
+docs/          how it works, phones and tablets, publishing, privacy
+ios/           Xcode project (XcodeGen) for iPhone, iPad and Mac
+android/       app icons and the Google Play bundle script
+store/         store text, store pictures
 vendor/        miniquad with fixes for iOS touch and Android controllers
 ```
 
