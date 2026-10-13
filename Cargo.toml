@@ -1,7 +1,7 @@
 [package]
 name = "delta-run"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 description = "Fly up a river, shoot what is in the way, keep the tank full: a small retro game in Rust"
 license = "MIT"
 repository = "https://github.com/akaco/river-raid-rust"
@@ -22,5 +22,29 @@ sound = ["dep:tinyaudio"]
 macroquad = "0.4.14"
 tinyaudio = { version = "1.1.0", optional = true }
 
+# game controllers and vibration on iPhone and iPad (the same crate miniquad uses)
+[target.'cfg(target_os = "ios")'.dependencies]
+objc = { version = "0.2", package = "objc-rs" }
+
 [profile.release]
 lto = true
+
+# Android: `cargo quad-apk build --release` (see docs/mobile.md).
+[package.metadata.android]
+package_name = "io.github.akaco.deltarun"
+label = "Delta Run"
+android_version = 31
+target_sdk_version = 31
+min_sdk_version = 26
+build_targets = ["aarch64-linux-android", "armv7-linux-androideabi"]
+fullscreen = true
+
+[package.metadata.android.activity_attributes]
+"android:screenOrientation" = "fullUser"
+# needed from Android 12 for the app to open from the launcher
+"android:exported" = "true"
+
+# miniquad 0.4.11 with one fix for iPhone and iPad multi-touch; see
+# vendor/miniquad/PATCHED.md.
+[patch.crates-io]
+miniquad = { path = "vendor/miniquad" }

@@ -15,10 +15,7 @@ fn autopilot(g: &Game, frame: u32) -> Input {
         for x in 0..160u8 {
             blocked[x as usize] |= band.land.is_land(row_of(dy), x);
         }
-        if let Some((_, art)) = object_line(&g.river, k, dy)
-            && band.object.kind != Kind::FuelDepot
-            && y >= 150
-        {
+        if let Some((_, art)) = object_line(&g.river, k, dy).filter(|_| band.object.kind != Kind::FuelDepot && y >= 150) {
             for (x, _) in band.object.pixels(art) {
                 for d in 0..10u8 {
                     blocked[(x as usize + 160 + d as usize - 5) % 160] = true; // (a little room either side)

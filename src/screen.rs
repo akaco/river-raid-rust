@@ -129,9 +129,7 @@ pub fn draw(game: &Game, c: &mut impl Canvas) {
         }
     }
     draw_gauge(c, game.fuel);
-    if game.phase != Phase::GameOver
-        && let Some(d) = game.lives.digit()
-    {
+    if let Some(d) = game.lives.digit().filter(|_| game.phase != Phase::GameOver) {
         draw_glyph(c, 20, 228, (b'0' + d) as char, player);
     }
     draw_text(c, 228, crate::GAME_NAME, palette::STATUS_TEXT);

@@ -10,6 +10,7 @@
 //! - `screen`: where things are on screen, and drawing them
 //! - `sound`, `synth`: sound effects and a tiny synthesizer
 //! - `sprites`, `palette`: pictures and colours
+//! - `touch`: on-screen controls for phones and tablets
 
 /// The game's name, as the window and the status bar show it.
 pub const GAME_NAME: &str = "DELTA RUN";
@@ -23,3 +24,4 @@ pub mod screen;
 pub mod sound;
 pub mod sprites;
 pub mod synth;
+pub mod touch;
